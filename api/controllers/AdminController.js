@@ -32,7 +32,7 @@ module.exports = {
     signIn: function(req, res) {
         var name = req.param('name');
 
-        if(name == undefined){
+        if (name == undefined) {
             name = '';
         }
         return res.view('admin/login', {
@@ -47,17 +47,17 @@ module.exports = {
             name: name
         }).exec(function findOneCB(err, admins) {
             if (err) {
-                console.log('err:'+err);
+                console.log('err:' + err);
             }
-            if(admins.length == 0){
+            if (admins.length == 0) {
                 return res.json({
-                  data: '该用户名不存在',
-                  state: 122
+                    data: '该用户名不存在',
+                    state: 122
                 });
-            }else {
+            } else {
                 return res.json({
-                  data: 'name exist',
-                  state: 222
+                    data: 'name exist',
+                    state: 222
                 });
             }
         });
@@ -73,31 +73,32 @@ module.exports = {
             name: name
         }).exec(function findOneCB(err, admins) {
             if (err) {
-                console.log('err:'+err);
+                console.log('err:' + err);
             }
-            if(admins.length == 0){
+            if (admins.length == 0) {
                 res.json({
-                  data: '该用户不存在',
-                  state: 122
+                    data: '该用户不存在',
+                    state: 122
                 });
                 return res.forbidden();
-            }else {
+            } else {
                 bcrypt.compare(password, admins[0].password, function(err, bres) {
-                    if(bres == true){
+                    console.log(password, admins[0].password);
+                    if (bres == true) {
                         req.session.admin = admins;
-                        if(admins[0].isAdmin == 1) isAdmin = true;
-                        if(admins[0].isSuperAdmin == 1) isSuperAdmin = true;
+                        if (admins[0].isAdmin == 1) isAdmin = true;
+                        if (admins[0].isSuperAdmin == 1) isSuperAdmin = true;
                         res.json({
-                          data: 'login success',
-                          isAdmin: isAdmin,
-                          isSuperAdmin: isSuperAdmin,
-                          state: 444
+                            data: 'login success',
+                            isAdmin: isAdmin,
+                            isSuperAdmin: isSuperAdmin,
+                            state: 444
                         });
                         return res.forbidden();
-                    }else {
+                    } else {
                         res.json({
-                          data: '密码错误',
-                          state: 344
+                            data: '密码错误',
+                            state: 344
                         });
                         return res.forbidden();
                     }
@@ -113,17 +114,17 @@ module.exports = {
             email: email
         }).exec(function findOneCB(err, admins) {
             if (err) {
-                console.log('err:'+err);
+                console.log('err:' + err);
             }
-            if(admins.length == 0){
+            if (admins.length == 0) {
                 return res.json({
-                  data: '该邮箱可以使用',
-                  state: 555
+                    data: '该邮箱可以使用',
+                    state: 555
                 });
-            }else {
+            } else {
                 return res.json({
-                  data: '该邮箱已被使用过',
-                  state: 677
+                    data: '该邮箱已被使用过',
+                    state: 677
                 });
             }
         });
@@ -140,27 +141,27 @@ module.exports = {
             email: email
         }).exec(function(err, created) {
             if (err) {
-                console.log('err:'+err);
+                console.log('err:' + err);
                 return res.json({
-                  data: '注册失败',
-                  state: 788
+                    data: '注册失败',
+                    state: 788
                 });
             }
             return res.json({
-              data: '注册成功',
-              state: 777
+                data: '注册成功',
+                state: 777
             });
         });
     },
 
-    logOut: function (req,res) {
+    logOut: function(req, res) {
         req.session.destroy(function(err) {
-            if(err){
+            if (err) {
                 console.log(err);
             }
             res.redirect('/');
         });
-	},
+    },
 
 
 
@@ -170,11 +171,15 @@ module.exports = {
         var admin = req.session.admin[0];
         var index = req.allParams().index;
         var pageSize = 10;
-        if(index == undefined){
+        if (index == undefined) {
             index = 1;
         }
         //,sort: 'name DESC/ASC'
-        Admin.find({ isSuperAdmin: { '!': '1' }}).paginate({
+        Admin.find({
+            isSuperAdmin: {
+                '!': '1'
+            }
+        }).paginate({
             page: index,
             limit: pageSize
         }).exec(function findOneCB(err, admins) {
@@ -203,11 +208,11 @@ module.exports = {
         var admin = req.session.admin[0];
         Admin.destroy({
             id: uid
-        }).exec(function (err){
+        }).exec(function(err) {
             if (err) {
                 console.log('err');
             }
-            sails.log('The records for troublesome admin ('+uid+') has been deleted, if they still existed.');
+            sails.log('The records for troublesome admin (' + uid + ') has been deleted, if they still existed.');
             res.redirect('/admin/adminList');
         });
     },
@@ -238,12 +243,13 @@ module.exports = {
         var email = req.param('email');
 
         Admin.update({
-            id: uid},{
-                // name: name,
-                // isSuperAdmin: isSuperAdmin,
-                // email: email,
-                isAdmin: isAdmin
-        }).exec(function afterwards(err, updated){
+            id: uid
+        }, {
+            // name: name,
+            // isSuperAdmin: isSuperAdmin,
+            // email: email,
+            isAdmin: isAdmin
+        }).exec(function afterwards(err, updated) {
             if (err) {
                 console.log(err);
                 return;
