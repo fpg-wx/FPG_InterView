@@ -215,7 +215,7 @@
                 $psw.addClass('invalid');
                 return false;
             }
-            if(str != '' && !reg.test(str)) {
+            if(str === '' || !reg.test(str)) {
                 console.log('密码格式不正确');
                 pswAvailable = false;
                 $psw.addClass('invalid');

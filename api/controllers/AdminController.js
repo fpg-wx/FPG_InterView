@@ -83,7 +83,6 @@ module.exports = {
                 return res.forbidden();
             } else {
                 bcrypt.compare(password, admins[0].password, function(err, bres) {
-                    console.log(password, admins[0].password);
                     if (bres == true) {
                         req.session.admin = admins;
                         if (admins[0].isAdmin == 1) isAdmin = true;
